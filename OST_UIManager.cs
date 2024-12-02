@@ -30,6 +30,7 @@ namespace FS_CustomOST
 
         public GameObject showTrackInfoToggle;
         public GameObject randomizeFirstTrackToggle;
+        public GameObject trackPlayingInMenuWarning;
 
         void Awake()
         {
@@ -47,11 +48,20 @@ namespace FS_CustomOST
             {
                 // Just call that function when a scene is loaded to "refresh" the track buttons, since they are only disabled if the randomize toggle is on AND the scene is the Menu.
                 EnableAllTrackButtons();
+
+                // As the name says, this warning is ONLY in menu, disable it while playing.
+                trackPlayingInMenuWarning.SetActive(false);
             }
-            if (OST_Main.Instance.currentSceneName.Contains("Menu") && OST_Settings.Instance != null)
+            else if (OST_Main.Instance.currentSceneName.Contains("Menu") && OST_Settings.Instance != null)
             {
                 // And if in Menu and the toggle is enable, disable all the track buttons.
                 if (OST_Settings.Instance.randomizeTrackAtStartToggle) DisableAllTrackButtons();
+            }
+
+            if (OST_Main.Instance.currentSceneName.Contains("Menu"))
+            {
+                // As the name says, this warning is ONLY in menu, enable it here.
+                trackPlayingInMenuWarning.SetActive(true);
             }
         }
 
@@ -147,6 +157,7 @@ namespace FS_CustomOST
             CreateLoopModeDropdown();
             CreateShowCurrentTrackInfoToggle();
             CreateRandomizeTrackAtStartToggle();
+            CreateInMenuWarningAboutTrackPlaying();
             CreateCloseButton();
             CreateCreditsText();
         }
@@ -424,13 +435,28 @@ namespace FS_CustomOST
             // Set the new action of the toggle.
             randomizeFirstTrackToggle.GetComponent<UIButton>().onClick.Clear();
             randomizeFirstTrackToggle.GetComponent<UIButton>().onClick.Add(new EventDelegate(ostSettings, "OnRandomizeTrackAtStart"));
-            randomizeFirstTrackToggle.transform.localPosition = new Vector3(-700f, -270f, 0f);
+            randomizeFirstTrackToggle.transform.localPosition = new Vector3(-700f, -280f, 0f);
 
             // Set the text of the tooltip, since when you put a localization key that doesn't exists here, it puts the text as is, so, no problem :)
             randomizeFirstTrackToggle.GetComponent<FractalTooltip>().toolTipLocKey = "Randomizes the [c][00FFFF]first track[-][/c] when you start or enter in a chapter.";
 
             // Set the toggle in the OST_Settings class.
             ostSettings.randomizeTrackAtStartToggle = randomizeFirstTrackToggle.GetComponent<UIToggle>();
+        }
+
+        void CreateInMenuWarningAboutTrackPlaying()
+        {
+            // Create the text object.
+            trackPlayingInMenuWarning = GameObject.Instantiate(ostSettingsPanel.GetChildWithName("Title"));
+            trackPlayingInMenuWarning.name = "InMenuTrackPlayingWarning";
+            trackPlayingInMenuWarning.transform.parent = ostSettingsOptionsParent.transform;
+
+            // Change its label text and font size too.
+            trackPlayingInMenuWarning.GetComponent<UILabel>().text = $"The track will start playing one you start playing.";
+            trackPlayingInMenuWarning.GetComponent<UILabel>().fontSize = 25;
+            trackPlayingInMenuWarning.GetComponent<UILabel>().color = Color.yellow;
+            trackPlayingInMenuWarning.transform.localPosition = new Vector3(-500f, -230f, 0f);
+            trackPlayingInMenuWarning.transform.localScale = Vector3.one;
         }
 
         void CreateCloseButton()
