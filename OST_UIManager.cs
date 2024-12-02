@@ -41,6 +41,20 @@ namespace FS_CustomOST
 
         }
 
+        public void OnSceneLoaded()
+        {
+            if (OST_Main.Instance.currentSceneName.Contains("Level"))
+            {
+                // Just call that function when a scene is loaded to "refresh" the track buttons, since they are only disabled if the randomize toggle is on AND the scene is the Menu.
+                EnableAllTrackButtons();
+            }
+            if (OST_Main.Instance.currentSceneName.Contains("Menu") && OST_Settings.Instance != null)
+            {
+                // And if in Menu and the toggle is enable, disable all the track buttons.
+                if (OST_Settings.Instance.randomizeTrackAtStartToggle) DisableAllTrackButtons();
+            }
+        }
+
         public void Init(AudioSource ostAudioSource)
         {
             CreateOSTSettingsManager(ostAudioSource);
@@ -484,5 +498,25 @@ namespace FS_CustomOST
             songsPagesText.GetComponent<UILabel>().text = $"{OST_Settings.Instance.currentSongsPage + 1}/{OST_Settings.Instance.totalSongPages}";
         }
 
+        public void EnableAllTrackButtons()
+        {
+            foreach (GameObject grid in songSelectionsGrids)
+            {
+                foreach (GameObject obj in grid.GetChilds())
+                {
+                    obj.GetComponent<UIButton>().isEnabled = true;
+                }
+            }
+        }
+        public void DisableAllTrackButtons()
+        {
+            foreach (GameObject grid in songSelectionsGrids)
+            {
+                foreach (GameObject obj in grid.GetChilds())
+                {
+                    obj.GetComponent<UIButton>().isEnabled = false;
+                }
+            }
+        }
     }
 }

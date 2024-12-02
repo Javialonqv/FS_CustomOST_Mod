@@ -216,10 +216,15 @@ namespace FS_CustomOST
             showTrackInfo = showTrackInfoToggle.value;
         }
 
+
         public void OnRandomizeTrackAtStart()
         {
+            if (OST_Main.Instance.currentSceneName.Contains("Level")) return;
+
+            // Set the value.
             randomizeTrackAtStart = randomizeTrackAtStartToggle.value;
 
+            // Disable or enable every track button.
             foreach (GameObject grid in OST_UIManager.Instance.songSelectionsGrids)
             {
                 foreach (GameObject obj in grid.GetChilds())

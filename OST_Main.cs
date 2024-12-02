@@ -56,6 +56,8 @@ namespace FS_CustomOST
         {
             currentSceneName = sceneName;
 
+            if (OST_UIManager.Instance != null) OST_UIManager.Instance.OnSceneLoaded();
+
             if (sceneName.Contains("Menu"))
             {
                 MelonCoroutines.Start(Init(false));
