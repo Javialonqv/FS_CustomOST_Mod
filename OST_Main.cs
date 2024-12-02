@@ -7,8 +7,6 @@ using System.Collections;
 using System.Net;
 using UnityEngine;
 using UnityEngine.Networking;
-using static Il2CppSystem.Array;
-using static System.Net.WebRequestMethods;
 
 [assembly: MelonInfo(typeof(FS_CustomOST.OST_Main), "FS_CustomOST", "0.2.2", "Javialon_qv", null)]
 [assembly: MelonGame("Haze Games", "Fractal Space")]
@@ -87,6 +85,9 @@ namespace FS_CustomOST
 
         IEnumerator Init(bool playSong)
         {
+            // Refresh this.
+            audioClipLoaded = false;
+
             // Get some references.
             audioSource = GetOSTAudioSource();
             clips = FetchAllClips(audioClipsPath);

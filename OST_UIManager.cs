@@ -353,6 +353,16 @@ namespace FS_CustomOST
             loopModeDropdown.GetComponent<UIPopupList>().onChange.Clear();
             loopModeDropdown.GetComponent<UIPopupList>().onChange.Add(new EventDelegate(ostSettings, "OnLoopModeChange"));
 
+            // Add Tooltip.
+            FractalTooltip tooltip = loopModeDropdown.AddComponent<FractalTooltip>();
+            tooltip.staticTooltipOffset = new Vector2(0f, 0.2f);
+            tooltip.toolTipLocKey = "Changes the loop mode between [b][c][00ffff]tracks.[-][/b]\n" +
+                                    "\n" +
+                                    "- [b][c][00ffff]Queue:[-][/b] Plays all the tracks of the list in order.\n" +
+                                    "- [b][c][00ffff]Random:[-][/b] Plays tracks of the list randomly.\n" +
+                                    "- [b][c][00ffff]Song:[-][/b] Plays the same selected track indefinitely.\n" +
+                                    "- [b][c][00ffff]None:[-][/b] When the track ends, the OST stops.";
+
             // Set the dropdown in the OST_Settings class.
             ostSettings.loopModeDropdown = loopModeDropdown.GetComponent<UIPopupList>();
         }
