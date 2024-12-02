@@ -412,7 +412,14 @@ namespace FS_CustomOST
             // Set the text of the tooltip.
             FractalTooltip tooltip = showTrackInfoToggle.AddComponent<FractalTooltip>();
             tooltip.staticTooltipOffset = new Vector2(0.4f, 0.1f);
-            tooltip.toolTipLocKey = "Displays info about the [b][c][00FFFF]tracks[-][/c][/b] in the top-left of the screen, such as:\n\n- Current clip name.\n- Play time.\n- Current clip ID.\n- Is the OST playing?\n- [b][c][ffde21]CONTROLS[-][/c][/b]";
+            tooltip.toolTipLocKey = "Displays info about the [b][c][00FFFF]tracks[-][/c][/b] in the top-left of the screen, such as:" +
+                                    "\n" +
+                                    "\n" +
+                                    "- Current clip name.\n" +
+                                    "- Play time.\n" +
+                                    "- Current clip ID.\n" +
+                                    "- Is the OST playing?\n" +
+                                    "- [b][c][ffde21]CONTROLS[-][/c][/b]";
 
             // Set the toggle in the OST_Settings class.
             ostSettings.showTrackInfoToggle = showTrackInfoToggle.GetComponent<UIToggle>();
