@@ -104,11 +104,13 @@ namespace FS_CustomOST
             {
                 if (string.IsNullOrEmpty(currentClipName))
                 {
+                    LoggerInstance.Msg("----------");
                     LoggerInstance.Msg("No song selected before loading the chapter, picking the first one...");
                     PlaySongWithID(0);
                 }
                 else
                 {
+                    LoggerInstance.Msg("----------");
                     LoggerInstance.Msg($"\"{currentClipName}\" selected before loading the chapter, picking it...");
                     PlaySongWithID(currentClipID);
                 }
@@ -282,23 +284,25 @@ namespace FS_CustomOST
         public bool PreviousSong(bool beginFromTheEndIfStartIsReached, bool play = true)
         {
             bool toReturn = false;
+            int previousClipID = currentClipID;
 
             if (beginFromTheEndIfStartIsReached)
             {
-                currentClipID--;
-                if (currentClipID <= 0) { currentClipID = clips.Length - 1; }
-                currentClipName = Path.GetFileName(clips[currentClipID]);
+                previousClipID--;
+                if (previousClipID <= 0) { previousClipID = clips.Length - 1; }
+                currentClipName = Path.GetFileName(clips[previousClipID]);
                 toReturn = true;
             }
             else
             {
-                currentClipID--;
-                if (currentClipID <= 0) { currentClipID = 0; } else { toReturn = true; }
-                currentClipName = Path.GetFileName(clips[currentClipID]);
+                previousClipID--;
+                if (previousClipID <= 0) { previousClipID = 0; } else { toReturn = true; }
+                currentClipName = Path.GetFileName(clips[previousClipID]);
             }
 
             if (play && toReturn)
             {
+                LoggerInstance.Msg($"PLAYING PREVIOUS SONG WITH ID {previousClipID}");
                 PlaySongWithID(currentClipID);
             }
 
@@ -309,24 +313,26 @@ namespace FS_CustomOST
         public bool NextSong(bool restartSongQueueIfReachTheEnd, bool play = true)
         {
             bool toReturn = false;
+            int nextClipID = currentClipID;
 
             if (restartSongQueueIfReachTheEnd)
             {
-                currentClipID++;
-                if (currentClipID >= clips.Length) { currentClipID = 0; }
-                currentClipName = Path.GetFileName(clips[currentClipID]);
+                nextClipID++;
+                if (nextClipID >= clips.Length) { nextClipID = 0; }
+                currentClipName = Path.GetFileName(clips[nextClipID]);
                 toReturn = true;
             }
             else
             {
-                currentClipID++;
-                if (currentClipID >= clips.Length) { currentClipID = clips.Length - 1; } else { toReturn = true; }
-                currentClipName = Path.GetFileName(clips[currentClipID]);
+                nextClipID++;
+                if (nextClipID >= clips.Length) { nextClipID = clips.Length - 1; } else { toReturn = true; }
+                currentClipName = Path.GetFileName(clips[nextClipID]);
             }
 
             if (play && toReturn)
             {
-                PlaySongWithID(currentClipID);
+                LoggerInstance.Msg($"PLAYING NEXT SONG WITH ID {nextClipID}");
+                PlaySongWithID(nextClipID);
             }
 
             return toReturn;

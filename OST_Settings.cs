@@ -62,13 +62,15 @@ namespace FS_CustomOST
                 {
                     if (loopMode == LoopMode.Queue)
                     {
-                        Melon<OST_Main>.Instance.NextSong(true);
+                        Melon<OST_Main>.Logger.Msg("----------");
                         Melon<OST_Main>.Logger.Msg("PLAYING NEXT SONG!");
+                        Melon<OST_Main>.Instance.NextSong(true);
                     }
                     else if (loopMode == LoopMode.Random)
                     {
-                        Melon<OST_Main>.Instance.PlayRandomSong();
+                        Melon<OST_Main>.Logger.Msg("----------");
                         Melon<OST_Main>.Logger.Msg("PLAYING RANDOM SONG!");
+                        Melon<OST_Main>.Instance.PlayRandomSong();
                     }
                 }
             }
