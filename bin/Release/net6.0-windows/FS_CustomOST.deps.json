@@ -9,6 +9,7 @@
       "FS_CustomOST/1.0.0": {
         "dependencies": {
           "Obfuscar": "2.2.40",
+          "TagLibSharp": "2.3.0",
           "0Harmony": "2.10.2.0",
           "Assembly-CSharp-firstpass": "0.0.0.0",
           "Assembly-CSharp": "0.0.0.0",
@@ -121,6 +122,14 @@
         }
       },
       "Obfuscar/2.2.40": {},
+      "TagLibSharp/2.3.0": {
+        "runtime": {
+          "lib/netstandard2.0/TagLibSharp.dll": {
+            "assemblyVersion": "2.3.0.0",
+            "fileVersion": "2.3.0.0"
+          }
+        }
+      },
       "0Harmony/2.10.2.0": {
         "runtime": {
           "0Harmony.dll": {
@@ -1135,6 +1144,13 @@
       "sha512": "sha512-GWaEz/mgdvesph0m6lzrLvUO727P2MFBHHFNvW5rWK4oXL4CVhqW+jkH6mUEjYYOcnvMtk4/4kl2A1GDctwjRQ==",
       "path": "obfuscar/2.2.40",
       "hashPath": "obfuscar.2.2.40.nupkg.sha512"
+    },
+    "TagLibSharp/2.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Qo4z6ZjnIfbR3Us1Za5M2vQ97OWZPmODvVmepxZ8XW0UIVLGdO2T63/N3b23kCcyiwuIe0TQvMEQG8wUCCD1mA==",
+      "path": "taglibsharp/2.3.0",
+      "hashPath": "taglibsharp.2.3.0.nupkg.sha512"
     },
     "0Harmony/2.10.2.0": {
       "type": "reference",

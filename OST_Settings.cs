@@ -307,5 +307,12 @@ namespace FS_CustomOST
 
             return $"{minutes}:{seconds}";
         }
+
+        public static string GetTrackArtistName(string trackFilePath)
+        {
+            var file = TagLib.File.Create(trackFilePath);
+
+            return file.Tag.Performers.Length > 0 ? file.Tag.Performers[0] : "Unknown Artist";
+        }
     }
 }

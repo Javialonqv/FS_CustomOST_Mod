@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using MelonLoader;
 using Il2CppInterop.Runtime;
+using TagLib;
 
 namespace FS_CustomOST
 {
@@ -218,6 +219,7 @@ namespace FS_CustomOST
                 templateInstance.GetComponent<UIButtonScale>().mScale = Vector3.one * 0.1f;
                 templateInstance.GetComponent<UISprite>().width = 405;
                 templateInstance.GetComponent<BoxCollider>().size = new Vector3(405f, templateInstance.GetComponent<BoxCollider>().size.y, 0f);
+                templateInstance.AddComponent<FractalTooltip>().toolTipLocKey = OST_Settings.GetTrackArtistName(OST_Main.Instance.clips[i]);
 
                 // Change the label text.
                 Destroy(templateInstance.GetChildWithName("Label").GetComponent<UILocalize>());
