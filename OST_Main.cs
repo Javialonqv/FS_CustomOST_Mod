@@ -100,6 +100,7 @@ namespace FS_CustomOST
             // Just a little threshold ;)
             yield return new WaitForSecondsRealtime(1f);
             
+            // playSong is false when in main menu and true when in a level (a chapter).
             if (playSong)
             {
                 if (string.IsNullOrEmpty(currentClipName))
