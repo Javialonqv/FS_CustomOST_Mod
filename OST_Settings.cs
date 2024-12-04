@@ -18,7 +18,6 @@ namespace FS_CustomOST
         public static OST_Settings Instance;
 
         public AudioSource audioSource;
-
         public bool inOstMenu;
 
         public enum LoopMode { Queue, Random, Song, None }
@@ -32,6 +31,7 @@ namespace FS_CustomOST
         public UIPopupList loopModeDropdown;
         public UIToggle showTrackInfoToggle;
         public UIToggle randomizeTrackAtStartToggle;
+        public UISlider pitchSlider;
 
         public EventDelegate uiResumeButtonOriginalEvent;
 
@@ -216,6 +216,13 @@ namespace FS_CustomOST
         public void OnShowTrackInfoToggle()
         {
             showTrackInfo = showTrackInfoToggle.value;
+        }
+
+        public void OnPitchSliderValueChanged()
+        {
+            OST_Main.Instance.LoggerInstance.Msg("TEEEST" + pitchSlider.value);
+
+            audioSource.pitch = pitchSlider.value;
         }
 
 

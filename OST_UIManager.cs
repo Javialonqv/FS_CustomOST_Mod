@@ -32,6 +32,7 @@ namespace FS_CustomOST
         public GameObject showTrackInfoToggle;
         public GameObject randomizeFirstTrackToggle;
         public GameObject trackPlayingInMenuWarning;
+        public GameObject pitchSlider;
 
         void Awake()
         {
@@ -159,6 +160,7 @@ namespace FS_CustomOST
             CreateShowCurrentTrackInfoToggle();
             CreateRandomizeTrackAtStartToggle();
             CreateInMenuWarningAboutTrackPlaying();
+            CreatePitchSlider();
             CreateCloseButton();
             CreateCreditsText();
         }
@@ -466,6 +468,28 @@ namespace FS_CustomOST
             trackPlayingInMenuWarning.GetComponent<UILabel>().color = Color.yellow;
             trackPlayingInMenuWarning.transform.localPosition = new Vector3(-500f, -230f, 0f);
             trackPlayingInMenuWarning.transform.localScale = Vector3.one;
+        }
+
+        void CreatePitchSlider()
+        {
+            pitchSlider = ostSettingsOptionsParent.GetChildWithName("Music");
+            pitchSlider.name = "Pitch";
+            pitchSlider.SetActive(true);
+
+            Destroy(pitchSlider.GetChildWithName("Slider").GetComponent<UISavedOption>());
+            UISlider slider = pitchSlider.GetChildWithName("Slider").GetComponent<UISlider>();
+
+            Destroy(pitchSlider.GetChildWithName("Label").GetComponent<UILocalize>());
+            pitchSlider.GetChildWithName("Label").GetComponent<UILabel>().text = "Pitch";
+
+            slider.onChange.Clear();
+            slider.onChange.Add(new EventDelegate(ostSettings, nameof(OST_Settings.OnPitchSliderValueChanged)));
+            pitchSlider.transform.localPosition = new Vector3(325f, 50f, 0f);
+
+            slider.gameObject.AddComponent<FractalTooltip>().toolTipLocKey =
+                "Changes the [c][00ffff]pitch[-][/c] of the song.";
+
+            ostSettings.pitchSlider = slider;
         }
 
         void CreateCloseButton()
