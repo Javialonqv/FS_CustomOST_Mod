@@ -22,6 +22,9 @@ namespace FS_CustomOST
         public string audioClipsPath = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Mods", "FS_CustomOST");
         public string currentSceneName = "";
 
+        public const string modVersion = "v0.3.0";
+        public const bool isDevBuild = true;
+
         public AudioSource audioSource;
         public string[] clips;
         public string currentClipName;

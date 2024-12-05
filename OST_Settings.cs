@@ -27,6 +27,7 @@ namespace FS_CustomOST
 
         public bool showTrackInfo;
         public bool randomizeTrackAtStart;
+        public float pitchValue;
 
         public UIPopupList loopModeDropdown;
         public UIToggle showTrackInfoToggle;
@@ -220,9 +221,16 @@ namespace FS_CustomOST
 
         public void OnPitchSliderValueChanged()
         {
-            OST_Main.Instance.LoggerInstance.Msg("TEEEST" + pitchSlider.value);
+            // Multiply by 2 to simulate the slider goes from 0 to 2.
+            pitchValue = pitchSlider.value * 2f;
 
-            audioSource.pitch = pitchSlider.value;
+            OST_Main.Instance.LoggerInstance.Msg("Pitch Slider Value changed to: " + pitchValue);
+
+            // Change the pitch of the song.
+            audioSource.pitch = pitchValue;
+
+            // Change the label showing the current pitch level.
+            pitchSlider.gameObject.GetChildWithName("Thumb").GetChildWithName("ValueLabel").GetComponent<UILabel>().text = pitchValue.ToString("F2");
         }
 
 

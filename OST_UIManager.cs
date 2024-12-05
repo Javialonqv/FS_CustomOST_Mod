@@ -155,6 +155,7 @@ namespace FS_CustomOST
 
         public void CreateAllOfTheOptions()
         {
+            CreateCurrentModVersionLabel();
             CreateSongSelectionList();
             CreateLoopModeDropdown();
             CreateShowCurrentTrackInfoToggle();
@@ -165,6 +166,33 @@ namespace FS_CustomOST
             CreateCreditsText();
         }
 
+
+        void CreateCurrentModVersionLabel()
+        {
+            // Create a copy of the menu title and change its partent to the options' parent.
+            GameObject version = GameObject.Instantiate(ostSettingsPanel.GetChildWithName("Title"));
+            version.transform.parent = ostSettingsOptionsParent.transform;
+            version.name = "CurrentModVersion";
+
+            // Ik this this inaccessible code, it's just I'll change that bool when I release the public build.
+            string currentModVersion = OST_Main.modVersion;
+            if (OST_Main.isDevBuild)
+            {
+                currentModVersion += " DEV BUILD";
+            }
+
+            // Change its label text and font size too.
+            version.GetComponent<UILabel>().text = currentModVersion;
+            version.GetComponent<UILabel>().fontSize = 30;
+            version.GetComponent<UILabel>().alignment = NGUIText.Alignment.Right;
+            version.GetComponent<UILabel>().width = 800;
+
+            // Reset scale to one.
+            version.transform.localScale = Vector3.one;
+
+            // Change its position to the top-right.
+            version.transform.localPosition = new Vector3(430f, 416.4f, 0f);
+        }
 
         void CreateSongSelectionList()
         {
@@ -472,23 +500,33 @@ namespace FS_CustomOST
 
         void CreatePitchSlider()
         {
-            pitchSlider = ostSettingsOptionsParent.GetChildWithName("Music");
+            // Find the FOV slider and change it's name and everything, lol.
+            pitchSlider = ostSettingsOptionsParent.GetChildWithName("FOV");
             pitchSlider.name = "Pitch";
             pitchSlider.SetActive(true);
 
+            // Destry the UISavedOption component and get the slider one.
             Destroy(pitchSlider.GetChildWithName("Slider").GetComponent<UISavedOption>());
             UISlider slider = pitchSlider.GetChildWithName("Slider").GetComponent<UISlider>();
 
+            // Destory the FUCKING localize component and change the name label of the slider.
             Destroy(pitchSlider.GetChildWithName("Label").GetComponent<UILocalize>());
             pitchSlider.GetChildWithName("Label").GetComponent<UILabel>().text = "Pitch";
 
+            // The default slider value.
+            slider.value = 0.5f;
+
+            // Remove old events and add a new one.
             slider.onChange.Clear();
             slider.onChange.Add(new EventDelegate(ostSettings, nameof(OST_Settings.OnPitchSliderValueChanged)));
+            // Change the slider's position.
             pitchSlider.transform.localPosition = new Vector3(325f, 50f, 0f);
 
-            slider.gameObject.AddComponent<FractalTooltip>().toolTipLocKey =
+            // Since the slider already has a tooltip on it, just change its text.
+            slider.gameObject.GetComponent<FractalTooltip>().toolTipLocKey =
                 "Changes the [c][00ffff]pitch[-][/c] of the song.";
 
+            // Set the pitch slider in the OST_Settings class.
             ostSettings.pitchSlider = slider;
         }
 
