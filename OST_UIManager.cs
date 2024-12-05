@@ -33,6 +33,7 @@ namespace FS_CustomOST
         public GameObject randomizeFirstTrackToggle;
         public GameObject trackPlayingInMenuWarning;
         public GameObject pitchSlider;
+        public GameObject transparencySlider;
 
         void Awake()
         {
@@ -162,6 +163,7 @@ namespace FS_CustomOST
             CreateRandomizeTrackAtStartToggle();
             CreateInMenuWarningAboutTrackPlaying();
             CreatePitchSlider();
+            CreateMenuTransparencySlider();
             CreateCloseButton();
             CreateCreditsText();
         }
@@ -528,6 +530,39 @@ namespace FS_CustomOST
 
             // Set the pitch slider in the OST_Settings class.
             ostSettings.pitchSlider = slider;
+        }
+
+        void CreateMenuTransparencySlider()
+        {
+            // Find the FOV slider and change it's name and everything, lol.
+            transparencySlider = ostSettingsOptionsParent.GetChildWithName("Music");
+            transparencySlider.name = "MenuTransparency";
+            transparencySlider.SetActive(true);
+
+            // Destry the UISavedOption component and get the slider one.
+            Destroy(transparencySlider.GetChildWithName("Slider").GetComponent<UISavedOption>());
+            UISlider slider = transparencySlider.GetChildWithName("Slider").GetComponent<UISlider>();
+
+            // Destory the FUCKING localize component and change the name label of the slider.
+            Destroy(transparencySlider.GetChildWithName("Label").GetComponent<UILocalize>());
+            transparencySlider.GetChildWithName("Label").GetComponent<UILabel>().text = "Menu Transparency";
+
+            // The default slider value.
+            slider.value = 1f;
+
+            // Remove old events and add a new one.
+            slider.onChange.Clear();
+            slider.onChange.Add(new EventDelegate(ostSettings, nameof(OST_Settings.OnMenuTransparencySliderValueChanged)));
+            // Change the slider's position.
+            transparencySlider.transform.localPosition = new Vector3(325f, -40f, 0f);
+
+            // Add tooltip.
+            FractalTooltip tooltip = slider.gameObject.AddComponent<FractalTooltip>();
+            tooltip.toolTipLocKey = "This was a silly request made by [b][c][00ffff]Fefeh[-][/c][/b], don't ask me, lol.";
+            tooltip.staticTooltipOffset = new Vector2(-0.25f, 0.12f);
+
+            // Set the slider in the OST_Settings class.
+            ostSettings.menuTransparencySlider = slider;
         }
 
         void CreateCloseButton()

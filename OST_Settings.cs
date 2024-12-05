@@ -28,11 +28,13 @@ namespace FS_CustomOST
         public bool showTrackInfo;
         public bool randomizeTrackAtStart;
         public float pitchValue;
+        public float menuTransparency;
 
         public UIPopupList loopModeDropdown;
         public UIToggle showTrackInfoToggle;
         public UIToggle randomizeTrackAtStartToggle;
         public UISlider pitchSlider;
+        public UISlider menuTransparencySlider;
 
         public EventDelegate uiResumeButtonOriginalEvent;
 
@@ -224,13 +226,19 @@ namespace FS_CustomOST
             // Multiply by 2 to simulate the slider goes from 0 to 2.
             pitchValue = pitchSlider.value * 2f;
 
-            OST_Main.Instance.LoggerInstance.Msg("Pitch Slider Value changed to: " + pitchValue);
-
             // Change the pitch of the song.
             audioSource.pitch = pitchValue;
 
             // Change the label showing the current pitch level.
             pitchSlider.gameObject.GetChildWithName("Thumb").GetChildWithName("ValueLabel").GetComponent<UILabel>().text = pitchValue.ToString("F2");
+        }
+
+        public void OnMenuTransparencySliderValueChanged()
+        {
+            menuTransparency = menuTransparencySlider.value;
+
+            UISprite menuWindowSprite = OST_UIManager.Instance.ostSettingsPanel.GetChildWithName("Window").GetComponent<UISprite>();
+            menuWindowSprite.color = new Color(menuWindowSprite.color.r, menuWindowSprite.color.g, menuWindowSprite.color.b, menuTransparency);
         }
 
 
