@@ -17,6 +17,7 @@ namespace FS_CustomOST
         public static OST_UIManager Instance;
 
         public OST_Settings ostSettings;
+        public OST_SFXLoader sfxLoader;
         public GameObject ostSettingsButton;
         public GameObject ostSettingsPanel;
         public GameObject ostSettingsOptionsParent;
@@ -71,6 +72,7 @@ namespace FS_CustomOST
         public void Init(AudioSource ostAudioSource)
         {
             CreateOSTSettingsManager(ostAudioSource);
+            CreateOSTSFXLoader();
             CreateOSTSettingsButton();
             CreateOSTSettingsPanel();
             SetupOSTSettingsButtonsAndOptions();
@@ -82,6 +84,11 @@ namespace FS_CustomOST
             // Add also the OST_Setings manager.
             ostSettings = gameObject.AddComponent<OST_Settings>();
             ostSettings.audioSource = ostAudioSource;
+        }
+
+        public void CreateOSTSFXLoader()
+        {
+            sfxLoader = new OST_SFXLoader();
         }
 
         public void CreateOSTSettingsButton()

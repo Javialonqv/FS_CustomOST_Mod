@@ -3,6 +3,7 @@ using Il2CppSteamworks;
 using Il2CppSystem;
 using MelonLoader;
 using System;
+using System.Reflection;
 using System.Collections;
 using System.Net;
 using UnityEngine;

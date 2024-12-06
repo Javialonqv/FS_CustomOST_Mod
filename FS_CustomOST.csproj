@@ -345,8 +345,14 @@
 	<ItemGroup>
 		<Compile Include="OST_Settings.cs" />
 		<Compile Include="OST_Main.cs" />
+		<Compile Include="OST_SFXLoader.cs" />
 		<Compile Include="OST_UIManager.cs" />
 		<Compile Include="Patches.cs" />
+		<Compile Include="Properties\Resources.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
 		<Compile Include="Utilities.cs" />
 	</ItemGroup>
 
@@ -356,6 +362,17 @@
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
 	  <PackageReference Include="TagLibSharp" Version="2.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Properties\sfx" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 	
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

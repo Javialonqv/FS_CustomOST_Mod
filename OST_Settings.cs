@@ -19,6 +19,7 @@ namespace FS_CustomOST
 
         public AudioSource audioSource;
         public bool inOstMenu;
+        public AudioSource uiSoundSource;
 
         public enum LoopMode { Queue, Random, Song, None }
         public LoopMode loopMode = LoopMode.Queue;
@@ -46,7 +47,7 @@ namespace FS_CustomOST
 
         void Start()
         {
-            
+            uiSoundSource = GameObject.Find("MainMenu/UISound").GetComponent<AudioSource>();
         }
 
         void Update()
@@ -96,16 +97,16 @@ namespace FS_CustomOST
 
             // Switch!
             inOstMenu = !inOstMenu;
-            //mainMenu.SetActive(!mainMenu.activeSelf);
-            //settings.SetActive(!settings.activeSelf);
 
             MelonCoroutines.Start(Animation());
 
             IEnumerator Animation()
             {
-                // For some reason the TweenAlpha in the OST Menu isn't working.
                 if (inOstMenu)
                 {
+                    uiSoundSource.clip = OST_UIManager.Instance.sfxLoader.okSoundClip;
+                    uiSoundSource.Play();
+
                     mainMenu.GetComponent<TweenAlpha>().PlayIgnoringTimeScale(true);
                     settings.SetActive(true);
                     settings.GetComponent<TweenAlpha>().PlayIgnoringTimeScale(false);
@@ -115,6 +116,9 @@ namespace FS_CustomOST
                 }
                 else
                 {
+                    uiSoundSource.clip = OST_UIManager.Instance.sfxLoader.exitSoundClip;
+                    uiSoundSource.Play();
+
                     mainMenu.SetActive(true);
                     mainMenu.GetComponent<TweenAlpha>().PlayIgnoringTimeScale(false);
                     settings.GetComponent<TweenAlpha>().PlayIgnoringTimeScale(true);
