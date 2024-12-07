@@ -78,5 +78,19 @@ namespace FS_CustomOST
                 @event.Execute();
             }
         }
+
+        public static void SetIsEnabled(this UIPopupList list, bool isEnabled)
+        {
+            if (isEnabled)
+            {
+                list.transform.GetComponent<UIWidget>().enabled = true;
+                list.transform.GetChildWithName("Background").GetComponent<UISprite>().color = new Color(0f, 0.6792f, 0.6451f, 1f);
+            }
+            else
+            {
+                list.transform.GetComponent<UIWidget>().enabled = false;
+                list.transform.GetChildWithName("Background").GetComponent<UISprite>().color = new Color(0.4191f, 0.4191f, 0.4191f, 0.897f);
+            }
+        }
     }
 }

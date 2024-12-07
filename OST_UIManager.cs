@@ -30,6 +30,10 @@ namespace FS_CustomOST
         public GameObject noClipsFoundText;
         public GameObject songsPagesText;
 
+        public GameObject enableOSTToggle;
+        public GameObject previousPageButton;
+        public GameObject nextPageButton;
+        public GameObject loopModeDropdown;
         public GameObject showTrackInfoToggle;
         public GameObject randomizeFirstTrackToggle;
         public GameObject trackPlayingInMenuWarning;
@@ -50,16 +54,8 @@ namespace FS_CustomOST
         {
             if (OST_Main.Instance.currentSceneName.Contains("Level"))
             {
-                // Just call that function when a scene is loaded to "refresh" the track buttons, since they are only disabled if the randomize toggle is on AND the scene is the Menu.
-                EnableAllTrackButtons();
-
                 // As the name says, this warning is ONLY in menu, disable it while playing.
                 trackPlayingInMenuWarning.SetActive(false);
-            }
-            else if (OST_Main.Instance.currentSceneName.Contains("Menu") && OST_Settings.Instance != null)
-            {
-                // And if in Menu and the toggle is enable, disable all the track buttons.
-                if (OST_Settings.Instance.randomizeTrackAtStartToggle) DisableAllTrackButtons();
             }
 
             if (OST_Main.Instance.currentSceneName.Contains("Menu"))
@@ -171,6 +167,7 @@ namespace FS_CustomOST
             CreateInMenuWarningAboutTrackPlaying();
             CreatePitchSlider();
             CreateMenuTransparencySlider();
+            CreateEnableCustomOSTButton();
             CreateCloseButton();
             CreateCreditsText();
         }
@@ -258,7 +255,7 @@ namespace FS_CustomOST
                 templateInstance.GetComponent<UIButtonScale>().mScale = Vector3.one * 0.1f;
                 templateInstance.GetComponent<UISprite>().width = 405;
                 templateInstance.GetComponent<BoxCollider>().size = new Vector3(405f, templateInstance.GetComponent<BoxCollider>().size.y, 0f);
-                templateInstance.AddComponent<FractalTooltip>().toolTipLocKey = OST_Settings.GetTrackArtistName(OST_Main.Instance.clips[i]);
+                templateInstance.AddComponent<FractalTooltip>().toolTipLocKey = OST_Settings.GetTrackButtonTooltip(OST_Main.Instance.clips[i]);
 
                 // Change the label text.
                 Destroy(templateInstance.GetChildWithName("Label").GetComponent<UILocalize>());
@@ -283,7 +280,7 @@ namespace FS_CustomOST
             if (OST_Settings.Instance.totalSongPages > 1)
             {
                 #region Create Pages Buttons
-                GameObject previousPageButton = Instantiate(ostSettingsButton);
+                previousPageButton = Instantiate(ostSettingsButton);
                 previousPageButton.name = "PrevPage";
                 previousPageButton.transform.parent = ostSettingsOptionsParent.transform;
                 previousPageButton.transform.localScale = Vector3.one;
@@ -299,7 +296,7 @@ namespace FS_CustomOST
                 previousPageButton.transform.GetComponent<UIButton>().onClick.Clear();
                 previousPageButton.transform.GetComponent<UIButton>().onClick.Add(new EventDelegate(OST_Settings.Instance, "OnPrevSongsPage"));
 
-                GameObject nextPageButton = Instantiate(ostSettingsButton);
+                nextPageButton = Instantiate(ostSettingsButton);
                 nextPageButton.name = "PrevPage";
                 nextPageButton.transform.parent = ostSettingsOptionsParent.transform;
                 nextPageButton.transform.localScale = Vector3.one;
@@ -392,7 +389,7 @@ namespace FS_CustomOST
         void CreateLoopModeDropdown()
         {
             // Get the old language dropdown popup (since it's the only dropdown in this menu) and enable it.
-            GameObject loopModeDropdown = ostSettingsOptionsParent.GetChildWithName("LanguagePanel").GetChildWithName("LanguagePopup");
+            loopModeDropdown = ostSettingsOptionsParent.GetChildWithName("LanguagePanel").GetChildWithName("LanguagePopup");
             loopModeDropdown.transform.parent.gameObject.SetActive(true);
             loopModeDropdown.transform.parent.name = "LoopModePanel";
             loopModeDropdown.name = "LoopModePopup";
@@ -500,10 +497,10 @@ namespace FS_CustomOST
             trackPlayingInMenuWarning.transform.parent = ostSettingsOptionsParent.transform;
 
             // Change its label text and font size too.
-            trackPlayingInMenuWarning.GetComponent<UILabel>().text = $"The track will start playing one you start playing.";
-            trackPlayingInMenuWarning.GetComponent<UILabel>().fontSize = 25;
+            trackPlayingInMenuWarning.GetComponent<UILabel>().text = $"The track will start playing once you start playing.";
+            trackPlayingInMenuWarning.GetComponent<UILabel>().fontSize = 24;
             trackPlayingInMenuWarning.GetComponent<UILabel>().color = Color.yellow;
-            trackPlayingInMenuWarning.transform.localPosition = new Vector3(-500f, -230f, 0f);
+            trackPlayingInMenuWarning.transform.localPosition = new Vector3(-530f, -230f, 0f);
             trackPlayingInMenuWarning.transform.localScale = Vector3.one;
         }
 
@@ -572,6 +569,35 @@ namespace FS_CustomOST
             ostSettings.menuTransparencySlider = slider;
         }
 
+        void CreateEnableCustomOSTButton()
+        {
+            // Get the cutscenes toggle and change its name.
+            enableOSTToggle = ostSettingsOptionsParent.GetChildWithName("Cutscenes");
+            enableOSTToggle.name = "EnableCustomOST";
+            enableOSTToggle.SetActive(true);
+
+            // DESTROY THE FUCKING LOCALIZATION COMPONENT and change the text :).
+            Destroy(enableOSTToggle.GetChildWithName("Label").GetComponent<UILocalize>());
+            enableOSTToggle.GetChildWithName("Label").GetComponent<UILabel>().text = "Enable Custom OST";
+
+            // Set the new action of the toggle.
+            enableOSTToggle.GetComponent<UIButton>().onClick.Clear();
+            enableOSTToggle.GetComponent<UIButton>().onClick.Add(new EventDelegate(ostSettings, "OnEnableOSTToggle"));
+            enableOSTToggle.GetComponent<UIToggle>().Set(true);
+            enableOSTToggle.transform.localPosition = new Vector3(-100f, 300f, 0f);
+
+            // Set the text of the tooltip.
+            FractalTooltip tooltip = enableOSTToggle.GetComponent<FractalTooltip>();
+            tooltip.toolTipLocKey = "Are you tired of original [c][ffde21]game OST[-][c]?\n" +
+                                    "So, enable me, [c][00ffff]join a chapter[-][c] and let me do the magic for you ;)";
+
+            // Set the toggle in the OST_Settings class.
+            ostSettings.enableOSTToggle = enableOSTToggle.GetComponent<UIToggle>();
+
+            // Execute this one since the default value of the toggle is true.
+            ostSettings.OnEnableOSTToggle();
+        }
+
         void CreateCloseButton()
         {
             // Create a copy of the OST Settings button and change its parent to the options' parent.
@@ -626,8 +652,16 @@ namespace FS_CustomOST
             }
             else
             {
-                if (!string.IsNullOrEmpty(OST_Main.Instance.currentClipName)) currentTrackNameText.GetComponent<UILabel>().text = "Loading...";
-                else currentTrackNameText.GetComponent<UILabel>().text = "None";
+                if (!string.IsNullOrEmpty(OST_Main.Instance.currentClipName))
+                {
+                    currentTrackNameText.GetComponent<UILabel>().text = "Loading...";
+                }
+                else
+                {
+                    currentTrackText.GetComponent<UILabel>().text = $"Current track: ?/{OST_Main.Instance.clips.Length}";
+                    currentTrackNameText.GetComponent<UILabel>().text = "None";
+                }
+
                 currentTrackExtensionText.GetComponent<UILabel>().text = "???";
             }
         }
@@ -637,23 +671,79 @@ namespace FS_CustomOST
             songsPagesText.GetComponent<UILabel>().text = $"{OST_Settings.Instance.currentSongsPage + 1}/{OST_Settings.Instance.totalSongPages}";
         }
 
-        public void EnableAllTrackButtons()
+        public void EnableOrDisableUIButtons(bool enableCustomOST, bool randomizeStartTrack)
         {
-            foreach (GameObject grid in songSelectionsGrids)
-            {
-                foreach (GameObject obj in grid.GetChilds())
-                {
-                    obj.GetComponent<UIButton>().isEnabled = true;
-                }
-            }
-        }
-        public void DisableAllTrackButtons()
-        {
+            #region Disable All
+            // Disable all track buttons.
             foreach (GameObject grid in songSelectionsGrids)
             {
                 foreach (GameObject obj in grid.GetChilds())
                 {
                     obj.GetComponent<UIButton>().isEnabled = false;
+                }
+            }
+
+            // Disable prev/next pages in track selection list.
+            if (previousPageButton != null)
+            {
+                previousPageButton.GetComponent<UIButton>().isEnabled = false;
+                nextPageButton.GetComponent<UIButton>().isEnabled = false;
+            }
+
+            // Disable loop mode dropdown.
+            loopModeDropdown.GetComponent<UIPopupList>().SetIsEnabled(false);
+
+            // Disable Show Current Track Info button.
+            showTrackInfoToggle.GetComponent<UIButton>().isEnabled = false;
+
+            // Disable Randomize Track at Start toggle.
+            randomizeFirstTrackToggle.GetComponent<UIButton>().isEnabled = false;
+
+            // Disable Pitch slider.
+            pitchSlider.GetComponent<UIButton>().isEnabled = false;
+            pitchSlider.GetChildWithName("Slider").GetComponent<UIButton>().isEnabled = false;
+
+            // Disable Menu Transparency slider.
+            transparencySlider.GetComponent<UIButton>().isEnabled = false;
+            transparencySlider.GetChildWithName("Slider").GetComponent<UIButton>().isEnabled = false;
+            #endregion
+
+            if (enableCustomOST)
+            {
+                // Enable prev/next pages in track selection list.
+                if (previousPageButton != null)
+                {
+                    previousPageButton.GetComponent<UIButton>().isEnabled = true;
+                    nextPageButton.GetComponent<UIButton>().isEnabled = true;
+                }
+
+                // Enable loop mode dropdown.
+                loopModeDropdown.GetComponent<UIPopupList>().SetIsEnabled(true);
+
+                // Enable Show Current Track Info button.
+                showTrackInfoToggle.GetComponent<UIButton>().isEnabled = true;
+
+                // Enable Randomize Track at Start toggle.
+                randomizeFirstTrackToggle.GetComponent<UIButton>().isEnabled = true;
+
+                // Enable Pitch slider.
+                pitchSlider.GetComponent<UIButton>().isEnabled = true;
+                pitchSlider.GetChildWithName("Slider").GetComponent<UIButton>().isEnabled = true;
+
+                // Enable Menu Transparency slider.
+                transparencySlider.GetComponent<UIButton>().isEnabled = true;
+                transparencySlider.GetChildWithName("Slider").GetComponent<UIButton>().isEnabled = true;
+
+                // The buttons are only enabled when the randomize toggle is off or if it's not in menu.
+                if (!randomizeStartTrack || !OST_Main.Instance.currentSceneName.Contains("Menu"))
+                {
+                    foreach (GameObject grid in songSelectionsGrids)
+                    {
+                        foreach (GameObject obj in grid.GetChilds())
+                        {
+                            obj.GetComponent<UIButton>().isEnabled = true;
+                        }
+                    }
                 }
             }
         }

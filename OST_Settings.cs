@@ -17,6 +17,8 @@ namespace FS_CustomOST
     {
         public static OST_Settings Instance;
 
+        AudioClip originalOST;
+
         public AudioSource audioSource;
         public bool inOstMenu;
         public AudioSource uiSoundSource;
@@ -26,11 +28,13 @@ namespace FS_CustomOST
         public int currentSongsPage = 0;
         public int totalSongPages = 1;
 
+        public bool enableCustomOST;
         public bool showTrackInfo;
         public bool randomizeTrackAtStart;
         public float pitchValue;
         public float menuTransparency;
 
+        public UIToggle enableOSTToggle;
         public UIPopupList loopModeDropdown;
         public UIToggle showTrackInfoToggle;
         public UIToggle randomizeTrackAtStartToggle;
@@ -78,6 +82,13 @@ namespace FS_CustomOST
                     }
                 }
             }
+        }
+
+        public void SaveOriginalOST()
+        {
+            originalOST = GameObject.Find("MusicManager/LevelNormalSource").GetComponent<AudioSource>().clip;
+            Melon<OST_Main>.Logger.Msg($"Null? {originalOST == null} and the source? {GameObject.Find("MusicManager/LevelNormalSource").GetComponent<AudioSource>() == null}");
+            originalOST.hideFlags = HideFlags.DontUnloadUnusedAsset;
         }
 
         public int GetTotalSongPages()
@@ -145,6 +156,23 @@ namespace FS_CustomOST
                 Color settingsColor = settings.GetChildWithName("Window").GetComponent<UISprite>().color;
                 settingsColor.a = 1f;
                 settings.GetChildWithName("Window").GetComponent<UISprite>().color = settingsColor;
+            }
+        }
+
+        public void OnEnableOSTToggle()
+        {
+            enableCustomOST = enableOSTToggle.value;
+
+            OST_UIManager.Instance.EnableOrDisableUIButtons(enableCustomOST, randomizeTrackAtStart);
+
+            if (!enableCustomOST)
+            {
+                OST_Main.Instance.currentClipName = "";
+                OST_Main.Instance.audioClipLoaded = false;
+                OST_UIManager.Instance.UpdateCurrentTrackText();
+
+                audioSource.clip = originalOST;
+                audioSource.Play();
             }
         }
 
@@ -254,14 +282,9 @@ namespace FS_CustomOST
             randomizeTrackAtStart = randomizeTrackAtStartToggle.value;
 
             // Disable or enable every track button.
-            foreach (GameObject grid in OST_UIManager.Instance.songSelectionsGrids)
-            {
-                foreach (GameObject obj in grid.GetChilds())
-                {
-                    obj.GetComponent<UIButton>().isEnabled = !randomizeTrackAtStart;
-                }
-            }
+            OST_UIManager.Instance.EnableOrDisableUIButtons(enableOSTToggle.value, randomizeTrackAtStartToggle.value);
 
+            // Clear selected song if randomize is enabled.
             if (randomizeTrackAtStart)
             {
                 OST_Main.Instance.currentClipName = "";
@@ -335,11 +358,38 @@ namespace FS_CustomOST
             return $"{minutes}:{seconds}";
         }
 
-        public static string GetTrackArtistName(string trackFilePath)
+        public static string GetTrackButtonTooltip(string trackFilePath)
         {
+            // Load metadata.
             var file = TagLib.File.Create(trackFilePath);
 
-            return file.Tag.Performers.Length > 0 ? file.Tag.Performers[0] : "Unknown Artist";
+            // Misc things.
+            TimeSpan durationSpan = file.Properties.Duration;
+
+            // Fetch track metadata.
+            string title = file.Tag.Title;
+            string album = file.Tag.Album;
+            string artist = file.Tag.Performers.Length > 0 ? file.Tag.Performers[0] : "";
+            string duration = durationSpan.Hours > 0 ? $"{durationSpan.Hours}h {durationSpan.Minutes}m {durationSpan.Seconds}" :
+                (durationSpan.Minutes > 0 ? $"{durationSpan.Minutes}m {durationSpan.Seconds}s" : $"{durationSpan.Seconds}s"); // Ik this code it bullshit, but I'm lazy, ok?
+
+            // Extra stuff.
+            string artistTooltipName = artist.Contains(";") ? "ARTISTS:" : "ARTIST:";
+
+            // Manage when they are null.
+            if (string.IsNullOrEmpty(title)) title = "[b][c][fe0000]UNKNOWN[-][/c][/b]";
+            if (string.IsNullOrEmpty(album)) album = "[b][c][fe0000]UNKNOWN[-][/c][/b]";
+            if (string.IsNullOrEmpty(artist)) artist = "[b][c][fe0000]UNKNOWN[-][/c][/b]";
+
+            // Make the final tooltip.
+            StringBuilder tooltip = new StringBuilder();
+            tooltip.AppendLine($"[b][c][00ffff]TITLE:[-][/c][/b] {title}");
+            tooltip.AppendLine($"[b][c][00ffff]ALBUM:[-][/c][/b] {album}");
+            tooltip.AppendLine($"[b][c][00ffff]{artistTooltipName}:[-][/c][/b] {artist}");
+            tooltip.AppendLine($"[b][c][00ffff]DURATION:[-][/c][/b] {duration}");
+
+            // Return the tooltip.
+            return tooltip.ToString();
         }
     }
 }

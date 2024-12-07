@@ -9,7 +9,7 @@ using System.Net;
 using UnityEngine;
 using UnityEngine.Networking;
 
-[assembly: MelonInfo(typeof(FS_CustomOST.OST_Main), "FS_CustomOST", "0.2.2", "Javialon_qv", null)]
+[assembly: MelonInfo(typeof(FS_CustomOST.OST_Main), "FS_CustomOST", "0.3.0", "Javialon_qv", null)]
 [assembly: MelonGame("Haze Games", "Fractal Space")]
 [assembly: MelonColor(1, 27, 2, 242)]
 [assembly: MelonAuthorColor(1, 255, 0, 0)]
@@ -103,7 +103,13 @@ namespace FS_CustomOST
 
             // Just a little threshold ;)
             yield return new WaitForSecondsRealtime(1f);
-            
+
+            if (currentSceneName.Contains("Level"))
+            {
+                // Since the settings class is initialized when you get in the Menu, when you go to a chapter the class is 100% created and NOT NULL.
+                OST_Settings.Instance.SaveOriginalOST();
+            }
+
             // playSong is false when in main menu and true when in a level (a chapter).
             if (playSong)
             {
