@@ -651,18 +651,19 @@ namespace FS_CustomOST
         {
             currentTrackText.GetComponent<UILabel>().text = $"Current track: {OST_Main.Instance.currentClipID + 1}/{OST_Main.Instance.clips.Length}";
 
-            // If it's an original chapters track, do something "special" and then return.
-            if (OST_Main.originalChapterTracks.Contains(OST_Main.Instance.currentClipName))
-            {
-                currentTrackNameText.GetComponent<UILabel>().text = Path.GetFileNameWithoutExtension(OST_Main.Instance.currentClipName);
-                currentTrackExtensionText.GetComponent<UILabel>().text = "ORIGINAL OST";
-                return;
-            }
-
             if (OST_Main.Instance.audioClipLoaded)
             {
-                currentTrackNameText.GetComponent<UILabel>().text = Path.GetFileNameWithoutExtension(OST_Main.Instance.currentClipName);
-                currentTrackExtensionText.GetComponent<UILabel>().text = Path.GetExtension(OST_Main.Instance.currentClipName).Substring(1).ToUpper();
+                // If it's an original chapters track, do something "special" and then return.
+                if (OST_Main.originalChapterTracks.Contains(OST_Main.Instance.currentClipName))
+                {
+                    currentTrackNameText.GetComponent<UILabel>().text = Path.GetFileNameWithoutExtension(OST_Main.Instance.currentClipName);
+                    currentTrackExtensionText.GetComponent<UILabel>().text = "ORIGINAL OST";
+                }
+                else
+                {
+                    currentTrackNameText.GetComponent<UILabel>().text = Path.GetFileNameWithoutExtension(OST_Main.Instance.currentClipName);
+                    currentTrackExtensionText.GetComponent<UILabel>().text = Path.GetExtension(OST_Main.Instance.currentClipName).Substring(1).ToUpper();
+                }
             }
             else
             {

@@ -394,7 +394,7 @@ namespace FS_CustomOST
                 tooltip.AppendLine($"[b][c][00ffff]TITLE:[-][/c][/b] {title}");
                 tooltip.AppendLine($"[b][c][00ffff]ALBUM:[-][/c][/b] {album}");
                 tooltip.AppendLine($"[b][c][00ffff]{artistTooltipName}:[-][/c][/b] {artist}");
-                tooltip.AppendLine($"[b][c][00ffff]DURATION:[-][/c][/b] {duration}");
+                tooltip.Append($"[b][c][00ffff]DURATION:[-][/c][/b] {duration}");
 
                 // Return the tooltip.
                 return tooltip.ToString();

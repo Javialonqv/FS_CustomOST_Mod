@@ -76,7 +76,7 @@ namespace FS_CustomOST
             }
             else if (sceneName.Contains("Level"))
             {
-                MelonCoroutines.Start(Init(true));
+                if (OST_Settings.Instance.enableCustomOST) MelonCoroutines.Start(Init(true));
             }
         }
 
@@ -164,8 +164,13 @@ namespace FS_CustomOST
             if (originalChapterTracks.Contains(audioClipPath))
             {
                 LoggerInstance.Msg($"Loading \"{Path.GetFileName(audioClipPath)}\" OST...");
+
+                OST_UIManager.Instance.UpdateCurrentTrackText();
+
                 int chapterNumber = int.Parse(audioClipPath.Split(' ')[1]);
                 ostClip = OST_UIManager.Instance.sfxLoader.LoadOriginalChapterOST(chapterNumber);
+
+                audioClipLoaded = true;
                 LoggerInstance.Msg("Audio file loaded!");
             }
             else // Else, load the CUSTOM OST from the folder.
@@ -212,7 +217,7 @@ namespace FS_CustomOST
         {
             if (OST_Settings.Instance != null)
             {
-                if (!OST_Settings.Instance.showTrackInfo) return;
+                if (!OST_Settings.Instance.showTrackInfo || !OST_Settings.Instance.enableCustomOST) return;
             }
 
             if (!currentSceneName.Contains("Level") || audioSource == null) return;
