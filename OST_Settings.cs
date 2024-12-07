@@ -360,36 +360,45 @@ namespace FS_CustomOST
 
         public static string GetTrackButtonTooltip(string trackFilePath)
         {
-            // Load metadata.
-            var file = TagLib.File.Create(trackFilePath);
+            // If it's an original chapter's track, there's a CUSTOM tooltip for them.
+            if (OST_Main.originalChapterTracks.Contains(trackFilePath))
+            {
+                string chapterNumber = trackFilePath.Split(' ')[1];
+                return $"The original OST of the [b][c][00ffff]CHAPTER {chapterNumber}.[-][/c][/b]";
+            }
+            else // Otherwise, use TagLib# as always.
+            {
+                // Load metadata.
+                var file = TagLib.File.Create(trackFilePath);
 
-            // Misc things.
-            TimeSpan durationSpan = file.Properties.Duration;
+                // Misc things.
+                TimeSpan durationSpan = file.Properties.Duration;
 
-            // Fetch track metadata.
-            string title = file.Tag.Title;
-            string album = file.Tag.Album;
-            string artist = file.Tag.Performers.Length > 0 ? file.Tag.Performers[0] : "";
-            string duration = durationSpan.Hours > 0 ? $"{durationSpan.Hours}h {durationSpan.Minutes}m {durationSpan.Seconds}" :
-                (durationSpan.Minutes > 0 ? $"{durationSpan.Minutes}m {durationSpan.Seconds}s" : $"{durationSpan.Seconds}s"); // Ik this code it bullshit, but I'm lazy, ok?
+                // Fetch track metadata.
+                string title = file.Tag.Title;
+                string album = file.Tag.Album;
+                string artist = file.Tag.Performers.Length > 0 ? file.Tag.Performers[0] : "";
+                string duration = durationSpan.Hours > 0 ? $"{durationSpan.Hours}h {durationSpan.Minutes}m {durationSpan.Seconds}" :
+                    (durationSpan.Minutes > 0 ? $"{durationSpan.Minutes}m {durationSpan.Seconds}s" : $"{durationSpan.Seconds}s"); // Ik this code it bullshit, but I'm lazy, ok?
 
-            // Extra stuff.
-            string artistTooltipName = artist.Contains(";") ? "ARTISTS:" : "ARTIST:";
+                // Extra stuff.
+                string artistTooltipName = artist.Contains(";") ? "ARTISTS:" : "ARTIST:";
 
-            // Manage when they are null.
-            if (string.IsNullOrEmpty(title)) title = "[b][c][fe0000]UNKNOWN[-][/c][/b]";
-            if (string.IsNullOrEmpty(album)) album = "[b][c][fe0000]UNKNOWN[-][/c][/b]";
-            if (string.IsNullOrEmpty(artist)) artist = "[b][c][fe0000]UNKNOWN[-][/c][/b]";
+                // Manage when they are null.
+                if (string.IsNullOrEmpty(title)) title = "[b][c][fe0000]UNKNOWN[-][/c][/b]";
+                if (string.IsNullOrEmpty(album)) album = "[b][c][fe0000]UNKNOWN[-][/c][/b]";
+                if (string.IsNullOrEmpty(artist)) artist = "[b][c][fe0000]UNKNOWN[-][/c][/b]";
 
-            // Make the final tooltip.
-            StringBuilder tooltip = new StringBuilder();
-            tooltip.AppendLine($"[b][c][00ffff]TITLE:[-][/c][/b] {title}");
-            tooltip.AppendLine($"[b][c][00ffff]ALBUM:[-][/c][/b] {album}");
-            tooltip.AppendLine($"[b][c][00ffff]{artistTooltipName}:[-][/c][/b] {artist}");
-            tooltip.AppendLine($"[b][c][00ffff]DURATION:[-][/c][/b] {duration}");
+                // Make the final tooltip.
+                StringBuilder tooltip = new StringBuilder();
+                tooltip.AppendLine($"[b][c][00ffff]TITLE:[-][/c][/b] {title}");
+                tooltip.AppendLine($"[b][c][00ffff]ALBUM:[-][/c][/b] {album}");
+                tooltip.AppendLine($"[b][c][00ffff]{artistTooltipName}:[-][/c][/b] {artist}");
+                tooltip.AppendLine($"[b][c][00ffff]DURATION:[-][/c][/b] {duration}");
 
-            // Return the tooltip.
-            return tooltip.ToString();
+                // Return the tooltip.
+                return tooltip.ToString();
+            }
         }
     }
 }

@@ -261,6 +261,12 @@ namespace FS_CustomOST
                 Destroy(templateInstance.GetChildWithName("Label").GetComponent<UILocalize>());
                 templateInstance.GetChildWithName("Label").GetComponent<UILabel>().text = Path.GetFileName(OST_Main.Instance.clips[i]);
 
+                // If it's an original chapters track, change the label color to yellow.
+                if (OST_Main.originalChapterTracks.Contains(OST_Main.Instance.clips[i]))
+                {
+                    templateInstance.GetChildWithName("Label").GetComponent<UILabel>().color = Color.yellow;
+                }
+
                 // Set a new action (play the specified song).
                 templateInstance.GetComponent<UIButton>().onClick.Clear();
                 EventDelegate onClickEvent = new EventDelegate(OST_Settings.Instance, "ChangeSongToOneWithName");
@@ -644,6 +650,14 @@ namespace FS_CustomOST
         public void UpdateCurrentTrackText()
         {
             currentTrackText.GetComponent<UILabel>().text = $"Current track: {OST_Main.Instance.currentClipID + 1}/{OST_Main.Instance.clips.Length}";
+
+            // If it's an original chapters track, do something "special" and then return.
+            if (OST_Main.originalChapterTracks.Contains(OST_Main.Instance.currentClipName))
+            {
+                currentTrackNameText.GetComponent<UILabel>().text = Path.GetFileNameWithoutExtension(OST_Main.Instance.currentClipName);
+                currentTrackExtensionText.GetComponent<UILabel>().text = "ORIGINAL OST";
+                return;
+            }
 
             if (OST_Main.Instance.audioClipLoaded)
             {

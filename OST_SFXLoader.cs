@@ -64,5 +64,10 @@ namespace FS_CustomOST
             GameObject.DontDestroyOnLoad(exitSound);
             exitSound.AddComponent<AudioSource>().clip = assetBundle.Load<AudioClip>("Exit");
         }
+
+        public AudioClip LoadOriginalChapterOST(int chapterNumber)
+        {
+            return assetBundle.Load<AudioClip>($"CH {chapterNumber}");
+        }
     }
 }

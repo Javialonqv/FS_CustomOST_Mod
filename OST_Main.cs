@@ -23,6 +23,14 @@ namespace FS_CustomOST
         public string audioClipsPath = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Mods", "FS_CustomOST");
         public string currentSceneName = "";
 
+        public static List<string> originalChapterTracks = new()
+        {
+            "CHAPTER 1",
+            "CHAPTER 2",
+            "CHAPTER 3",
+            "CHAPTER 4"
+        };
+
         public const string modVersion = "v0.3.0";
         public const bool isDevBuild = true;
 
@@ -152,27 +160,38 @@ namespace FS_CustomOST
                 yield break;
             }
 
-            LoggerInstance.Msg($"Loading \"{Path.GetFileName(audioClipPath)}\" audio file...");
-            UnityWebRequest www;
-            www = UnityWebRequest.Get(audioClipPath);
-            www.SendWebRequest();
-
-            OST_UIManager.Instance.UpdateCurrentTrackText();
-
-            while (!www.isDone) yield return null;
-            if (www.isNetworkError || www.isHttpError) yield return null;
-
-            try
+            // If it's an original chapter track, then load it from the asset bundle.
+            if (originalChapterTracks.Contains(audioClipPath))
             {
-                ostClip = WebRequestWWW.InternalCreateAudioClipUsingDH(www.downloadHandler, www.url, false, true, UnityEngine.AudioType.UNKNOWN);
+                LoggerInstance.Msg($"Loading \"{Path.GetFileName(audioClipPath)}\" OST...");
+                int chapterNumber = int.Parse(audioClipPath.Split(' ')[1]);
+                ostClip = OST_UIManager.Instance.sfxLoader.LoadOriginalChapterOST(chapterNumber);
                 LoggerInstance.Msg("Audio file loaded!");
-                audioClipLoaded = true;
             }
-            catch
+            else // Else, load the CUSTOM OST from the folder.
             {
-                LoggerInstance.Error("Error loading audio file! Aborting...");
-                // Even if the audio failed to load, I just need this bool to know if the audio loading has finished, i dont care if it was succesfully or not.
-                audioClipLoaded = true;
+                LoggerInstance.Msg($"Loading \"{Path.GetFileName(audioClipPath)}\" audio file...");
+                UnityWebRequest www;
+                www = UnityWebRequest.Get(audioClipPath);
+                www.SendWebRequest();
+
+                OST_UIManager.Instance.UpdateCurrentTrackText();
+
+                while (!www.isDone) yield return null;
+                if (www.isNetworkError || www.isHttpError) yield return null;
+
+                try
+                {
+                    ostClip = WebRequestWWW.InternalCreateAudioClipUsingDH(www.downloadHandler, www.url, false, true, UnityEngine.AudioType.UNKNOWN);
+                    LoggerInstance.Msg("Audio file loaded!");
+                    audioClipLoaded = true;
+                }
+                catch
+                {
+                    LoggerInstance.Error("Error loading audio file! Aborting...");
+                    // Even if the audio failed to load, I just need this bool to know if the audio loading has finished, i dont care if it was succesfully or not.
+                    audioClipLoaded = true;
+                }
             }
         }
 
@@ -253,14 +272,20 @@ namespace FS_CustomOST
 
         string[] FetchAllClips(string clipsDirectory)
         {
+            // Also add the original chapter's ost in the beginning of the arrays.
             if (Directory.Exists(clipsDirectory))
             {
-                return Directory.GetFiles(clipsDirectory);
+                List<string> clips = new List<string>();
+                clips.AddRange(originalChapterTracks);
+                clips.AddRange(Directory.GetFiles(clipsDirectory));
+                return clips.ToArray();
             }
             else
             {
                 LoggerInstance.Warning("Can't find \"FS_CustomOST\" folder.");
-                return System.Array.Empty<string>();
+                List<string> clips = new List<string>();
+                clips.AddRange(originalChapterTracks);
+                return clips.ToArray();
             }
         }
 
